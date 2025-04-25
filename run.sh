@@ -12,7 +12,7 @@ fi
 paste "$WALLET_FILE" "$PROXY_FILE" | while IFS=$'\t' read -r wallet proxy; do
   # Jalankan proses di background
   echo "🚀 Claiming untuk wallet: $wallet dengan proxy: $proxy"
-  node run.js "$wallet" "$proxy" &
+  node main.js "$wallet" "$proxy" &
 
   # Hitung jumlah proses paralel
   while [[ $(jobs -r -p | wc -l) -ge $MAX_PARALLEL ]]; do
