@@ -1,7 +1,7 @@
 from eth_account import Account
 import os
 
-# Aktifkan kemampuan entropy
+# Aktifkan kemampuan entropy (untuk fitur HD Wallet jika dibutuhkan di masa depan)
 Account.enable_unaudited_hdwallet_features()
 
 def generate_wallets(count):
@@ -31,11 +31,17 @@ def main():
         return
 
     addresses, private_keys = generate_wallets(count)
+
+    # Paksa timpa file jika ada
     save_to_file("wallet.txt", addresses)
     save_to_file("pk.txt", private_keys)
 
+    # Preview wallet pertama
     print(f"\n✅ Berhasil membuat {count} wallet.")
-    print("📁 wallet.txt dan pk.txt telah dibuat.")
+    print("📁 File 'wallet.txt' dan 'pk.txt' telah ditimpa (jika sebelumnya ada).")
+    print("\n🔍 Contoh wallet pertama:")
+    print(f"Address     : {addresses[0]}")
+    print(f"Private Key : {private_keys[0]}")
 
 if __name__ == "__main__":
     main()
