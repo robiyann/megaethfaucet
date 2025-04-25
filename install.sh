@@ -4,9 +4,8 @@ set -e
 
 echo "📦 Update & upgrade sistem..."
 sudo apt update && sudo apt upgrade -y
-apt install nano
-apt install pip
-pip install -r req.py
+apt install nano pip -y
+pip install -r req.txt
 
 echo "📥 Install curl dan Node.js LTS..."
 sudo apt install curl -y
