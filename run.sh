@@ -2,7 +2,13 @@
 
 WALLET_FILE="wallet.txt"
 PROXY_FILE="proxy.txt"
-MAX_PARALLEL=5 # ⬅️ jumlah thread paralel, bisa disesuaikan
+MAX_PARALLEL=10
+
+SUCCESS_LOG="success.log"
+FAILED_LOG="failed.log"
+
+> "$SUCCESS_LOG"
+> "$FAILED_LOG"
 
 if [[ ! -f "$WALLET_FILE" || ! -f "$PROXY_FILE" ]]; then
   echo "wallet.txt atau proxy.txt tidak ditemukan!"
@@ -10,16 +16,25 @@ if [[ ! -f "$WALLET_FILE" || ! -f "$PROXY_FILE" ]]; then
 fi
 
 paste "$WALLET_FILE" "$PROXY_FILE" | while IFS=$'\t' read -r wallet proxy; do
-  # Jalankan proses di background
-  echo "🚀 Claiming untuk wallet: $wallet dengan proxy: $proxy"
-  node main.js "$wallet" "$proxy" &
+  (
+    delay=$((RANDOM % 3 + 1))  # Delay acak 1-3 detik
+    sleep $delay
 
-  # Hitung jumlah proses paralel
+    output=$(node run.js "$wallet" "$proxy" 2>&1)
+    if echo "$output" | grep -q "🎉"; then
+      echo "[✅ SUCCESS] $wallet" >> "$SUCCESS_LOG"
+      echo "$output" | grep "🎉"
+    else
+      echo "[❌ FAILED] $wallet" >> "$FAILED_LOG"
+      echo "$output" | grep -E "❌|timeout|Error"
+    fi
+  ) &
+
+  # Kontrol paralelisme
   while [[ $(jobs -r -p | wc -l) -ge $MAX_PARALLEL ]]; do
     sleep 1
   done
 done
 
-# Tunggu semua proses selesai
 wait
-echo "✅ Semua proses selesai."
+echo "✅ Semua klaim selesai. Lihat $SUCCESS_LOG dan $FAILED_LOG"
