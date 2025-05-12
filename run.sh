@@ -20,7 +20,7 @@ paste "$WALLET_FILE" "$PROXY_FILE" | while IFS=$'\t' read -r wallet proxy; do
     delay=$((RANDOM % 3 + 1))  # Delay acak 1-3 detik
     sleep $delay
 
-    output=$(node run.js "$wallet" "$proxy" 2>&1)
+    output=$(node main.js "$wallet" "$proxy" 2>&1)
     if echo "$output" | grep -q "🎉"; then
       echo "[✅ SUCCESS] $wallet" >> "$SUCCESS_LOG"
       echo "$output" | grep "🎉"
